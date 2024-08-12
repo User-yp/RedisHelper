@@ -1,13 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 using Timer = System.Timers.Timer;
 
 
@@ -34,28 +29,40 @@ public class RedisHelper : IRedisHelper
 
     #region String
 
-    public async Task<bool> StringSetAsync<T>(string key, T value) =>
-        await _db.StringSetAsync(key, value.ToRedisValue());
+    public async Task<bool> StringSetAsync<T>(string key, T value)
+    {
+        return await _db.StringSetAsync(key, value.ToRedisValue());
+    }
+        
 
-    public async Task<bool> StringSetAsync<T>(string key, T value, TimeSpan timeSpan) =>
-        await _db.StringSetAsync(key, value.ToRedisValue(), timeSpan);
+    public async Task<bool> StringSetAsync<T>(string key, T value, TimeSpan timeSpan)
+    {
+        return await _db.StringSetAsync(key, value.ToRedisValue(), timeSpan);
+    }
+        
 
     public async Task<T> StringGetAsync<T>(string key)
-        //where T : class 
-        => (await _db.StringGetAsync(key)).ToObject<T>();
+    {
+        return (await _db.StringGetAsync(key)).ToObject<T>();
+    }
 
-    public async Task<double> StringIncrementAsync(string key, int value = 1) =>
-        await _db.StringIncrementAsync(key, value);
+    public async Task<double> StringIncrementAsync(string key, int value = 1) 
+    {
+        return await _db.StringIncrementAsync(key, value);
+    }
 
-    public async Task<double> StringDecrementAsync(string key, int value = 1) =>
-        await _db.StringDecrementAsync(key, value);
+    public async Task<double> StringDecrementAsync(string key, int value = 1)
+    {
+        return await _db.StringDecrementAsync(key, value);
+    }
 
     #endregion
 
     #region List
 
-    public async Task<long> EnqueueAsync<T>(string key, T value) =>
-        await _db.ListRightPushAsync(key, value.ToRedisValue());
+    public async Task<long> EnqueueAsync<T>(string key, T value) {
+        return await _db.ListRightPushAsync(key, value.ToRedisValue());
+    }
 
     public async Task<long> EnqueueorCreateAsync<T>(string key, T value)
     {
@@ -67,63 +74,85 @@ public class RedisHelper : IRedisHelper
     public async Task<T> DequeueAsync<T>(string key) where T : class =>
         (await _db.ListLeftPopAsync(key)).ToObject<T>();
 
-    public async Task<IEnumerable<T>> PeekRangeAsync<T>(string key, long start = 0, long stop = -1)
-        where T : class =>
+    public async Task<IEnumerable<T>> PeekRangeAsync<T>(string key, long start = 0, long stop = -1) where T : class =>
         (await _db.ListRangeAsync(key, start, stop)).ToObjects<T>();
 
     #endregion
 
     #region Set
 
-    public async Task<bool> SetAddAsync<T>(string key, T value) =>
-        await _db.SetAddAsync(key, value.ToRedisValue());
+    public async Task<bool> SetAddAsync<T>(string key, T value) 
+    {
+        return await _db.SetAddAsync(key, value.ToRedisValue());
+    }
 
-    public async Task<long> SetRemoveAsync<T>(string key, IEnumerable<T> values) =>
-        await _db.SetRemoveAsync(key, values.ToRedisValues());
+    public async Task<long> SetRemoveAsync<T>(string key, IEnumerable<T> values) 
+    {
+        return await _db.SetRemoveAsync(key, values.ToRedisValues());
+    }
 
-    public async Task<IEnumerable<T>> SetMembersAsync<T>(string key) where T : class =>
-        (await _db.SetMembersAsync(key)).ToObjects<T>();
+    public async Task<IEnumerable<T>> SetMembersAsync<T>(string key) where T : class
+    {
+        return (await _db.SetMembersAsync(key)).ToObjects<T>();
+    }
 
-    public async Task<bool> SetContainsAsync<T>(string key, T value) =>
-        await _db.SetContainsAsync(key, value.ToRedisValue());
+    public async Task<bool> SetContainsAsync<T>(string key, T value)
+    {
+        return await _db.SetContainsAsync(key, value.ToRedisValue());
+    }
 
-    #endregion
+    #endregion 
 
     #region ZSet
 
-    public async Task<bool> SortedSetAddAsync(string key, string member, double score) =>
-        await _db.SortedSetAddAsync(key, member, score);
+    public async Task<bool> SortedSetAddAsync(string key, string member, double score)
+    {
+        return await _db.SortedSetAddAsync(key, member, score);
+    }
 
-    public async Task<long> SortedSetRemoveAsync(string key, IEnumerable<string> members) =>
-        await _db.SortedSetRemoveAsync(key, members.ToRedisValues());
+    public async Task<long> SortedSetRemoveAsync(string key, IEnumerable<string> members)
+    {
+        return await _db.SortedSetRemoveAsync(key, members.ToRedisValues());
+    }
 
-    public async Task<double> SortedSetIncrementAsync(string key, string member, double value) =>
-        await _db.SortedSetIncrementAsync(key, member, value);
+    public async Task<double> SortedSetIncrementAsync(string key, string member, double value) 
+    {
+        return await _db.SortedSetIncrementAsync(key, member, value);
+    }
 
-    public async Task<double> SortedSetDecrementAsync(string key, string member, double value) =>
-        await _db.SortedSetDecrementAsync(key, member, value);
+    public async Task<double> SortedSetDecrementAsync(string key, string member, double value) 
+    {
+        return await _db.SortedSetDecrementAsync(key, member, value);
+    }
 
     public async Task<ConcurrentDictionary<string, double>> SortedSetRangeByRankWithScoresAsync(string key,
         long start = 0,
         long stop = -1,
-        Order order = Order.Ascending) =>
-        (await _db.SortedSetRangeByRankWithScoresAsync(key, start, stop, order)).ToConcurrentDictionary();
+        Order order = Order.Ascending)
+    {
+        return (await _db.SortedSetRangeByRankWithScoresAsync(key, start, stop, order)).ToConcurrentDictionary();
+    }
 
     public async Task<ConcurrentDictionary<string, double>> SortedSetRangeByScoreWithScoresAsync(string key,
         double start = double.NegativeInfinity, double stop = double.PositiveInfinity,
-        Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) =>
-        (await _db.SortedSetRangeByScoreWithScoresAsync(key, start, stop, exclude, order, skip, take))
-        .ToConcurrentDictionary();
+        Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1) 
+    {
+        return (await _db.SortedSetRangeByScoreWithScoresAsync(key, start, stop, exclude, order, skip, take)).ToConcurrentDictionary();
+    }
 
     #endregion
 
     #region Hash
 
-    public async Task<ConcurrentDictionary<string, string>> HashGetAsync(string key) =>
-        (await _db.HashGetAllAsync(key)).ToConcurrentDictionary();
+    public async Task<ConcurrentDictionary<string, string>> HashGetAsync(string key)
+    {
+        return (await _db.HashGetAllAsync(key)).ToConcurrentDictionary();
+    }
+        
 
-    public async Task<ConcurrentDictionary<string, string>> HashGetFieldsAsync(string key, IEnumerable<string> fields) =>
-        (await _db.HashGetAsync(key, fields.ToRedisValues())).ToConcurrentDictionary(fields);
+    public async Task<ConcurrentDictionary<string, string>> HashGetFieldsAsync(string key, IEnumerable<string> fields) {
+        return (await _db.HashGetAsync(key, fields.ToRedisValues())).ToConcurrentDictionary(fields);
+    }
 
     public async Task HashSetAsync(string key, ConcurrentDictionary<string, string> entries)
     {
@@ -154,7 +183,6 @@ public class RedisHelper : IRedisHelper
 
             hs[field.Key] = field.Value;
         }
-
         await HashSetAsync(key, hs);
     }
 
@@ -232,8 +260,11 @@ public class RedisHelper : IRedisHelper
         }
         return true;
     }
-    public async Task<bool> HashDeleteAsync(string key) =>
-        await KeyDeleteAsync(new string[] { key }) > 0;
+    public async Task<bool> HashDeleteAsync(string key)
+    {
+        return await KeyDeleteAsync(new string[] { key }) > 0;
+    }
+        
 
     public async Task<bool> HashDeleteFieldsAsync(string key, IEnumerable<string> fields)
     {
@@ -253,21 +284,35 @@ public class RedisHelper : IRedisHelper
 
     #region Key
 
-    public IEnumerable<string> GetAllKeys() =>
-        _conn.GetEndPoints().Select(endPoint => _conn.GetServer(endPoint))
+    public IEnumerable<string> GetAllKeys()
+    {
+        return _conn.GetEndPoints().Select(endPoint => _conn.GetServer(endPoint))
             .SelectMany(server => server.Keys().ToStrings());
+    }
+        
 
-    public IEnumerable<string> GetAllKeys(EndPoint endPoint) =>
-        _conn.GetServer(endPoint).Keys().ToStrings();
+    public IEnumerable<string> GetAllKeys(EndPoint endPoint)
+    {
+        return _conn.GetServer(endPoint).Keys().ToStrings();
+    }
+        
 
-    public async Task<bool> KeyExistsAsync(string key) =>
-        await _db.KeyExistsAsync(key);
+    public async Task<bool> KeyExistsAsync(string key)
+    {
+        return await _db.KeyExistsAsync(key);
+    }
+        
 
-    public async Task<long> KeyDeleteAsync(IEnumerable<string> keys) =>
-        await _db.KeyDeleteAsync(keys.Select(k => (RedisKey)k).ToArray());
+    public async Task<long> KeyDeleteAsync(IEnumerable<string> keys)
+    {
+        return await _db.KeyDeleteAsync(keys.Select(k => (RedisKey)k).ToArray());
+    }
+        
 
-    public async Task<bool> KeyDeleteAsync(string key) =>
-        await _db.KeyDeleteAsync(key);
+    public async Task<bool> KeyDeleteAsync(string key)
+    {
+        return await _db.KeyDeleteAsync(key);
+    }
 
     public async Task<bool> DeleteAllKeyAsync()
     {
@@ -282,24 +327,32 @@ public class RedisHelper : IRedisHelper
         return true;
     }
 
-    public async Task<bool> KeyExpireAsync(string key, TimeSpan? expiry) =>
-        await _db.KeyExpireAsync(key, expiry);
+    public async Task<bool> KeyExpireAsync(string key, TimeSpan? expiry) 
+    {
+        return await _db.KeyExpireAsync(key, expiry);
+    }
 
-    public async Task<bool> KeyExpireAsync(string key, DateTime? expiry) =>
-        await _db.KeyExpireAsync(key, expiry);
+    public async Task<bool> KeyExpireAsync(string key, DateTime? expiry) {
+        return await _db.KeyExpireAsync(key, expiry);
+    }
 
     #endregion
 
     #region Advanced
 
-    public async Task<long> PublishAsync(string channel, string msg) =>
-        await _conn.GetSubscriber().PublishAsync(channel, msg);
+    public async Task<long> PublishAsync(string channel, string msg) {
+        return await _conn.GetSubscriber().PublishAsync(channel, msg);
+    }
 
-    public async Task SubscribeAsync(string channel, Action<string, string> handler) =>
+    public async Task SubscribeAsync(string channel, Action<string, string> handler)
+    {
         await _conn.GetSubscriber().SubscribeAsync(channel, (chn, msg) => handler(chn, msg));
+    }
+        
 
-    public Task ExecuteBatchAsync(params Action[] operations) =>
-        Task.Run(() =>
+    public Task ExecuteBatchAsync(params Action[] operations)
+    {
+        return Task.Run(() =>
         {
             var batch = _db.CreateBatch();
 
@@ -308,6 +361,8 @@ public class RedisHelper : IRedisHelper
 
             batch.Execute();
         });
+    }
+        
 
 
     public async Task<(bool, object)> LockExecuteAsync(string key, string value, Delegate del,
@@ -453,8 +508,7 @@ public static class StackExchangeRedisExtension
         return !enumerable.Any() ? null : enumerable.Select(v => v.ToRedisValue()).ToArray();
     }
 
-    public static T ToObject<T>(this RedisValue value)
-    //where T : class
+    public static T ToObject<T>(this RedisValue value)//where T : class
     {
         if (!value.HasValue)
             return default;

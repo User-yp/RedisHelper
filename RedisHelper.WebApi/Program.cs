@@ -1,4 +1,8 @@
+using Com.Ctrip.Framework.Apollo.Enums;
+using Com.Ctrip.Framework.Apollo;
 using RedisHelper;
+using Newtonsoft.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,11 +12,19 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.WebHost.ConfigureAppConfiguration((host, cfg) =>
+{
+    cfg.AddApollo(host.Configuration.GetSection("apollo"))
+    .AddNamespace("User.CommonConfiguration", ConfigFileFormat.Json).AddDefault(); 
+});
+
 builder.Services.AddRedisHelper(redisOption =>
 {
-    redisOption.ConnectionString = Environment.GetEnvironmentVariable("Redis:ConnStr");
-    redisOption.DbNumber = 0;
+    //Get ConnectionString from apollo
+    redisOption.ConnectionString = builder.Configuration.GetSection("Redis").Value;
+    redisOption.DbNumber = 1;
 });
+
 
 var app = builder.Build();
 

@@ -6,17 +6,16 @@ namespace RedisHelper;
 
 public interface IRedisHelper
 {
-    #region String
     Task<bool> StringSetAsync<T>(string key, T value);
     Task<bool> StringSetAsync<T>(string key, T value, TimeSpan timeSpan);
     Task<T> StringGetAsync<T>(string key); // where T : class;
     Task<double> StringIncrementAsync(string key, int value = 1);
     Task<double> StringDecrementAsync(string key, int value = 1);
-    #endregion
 
-    #region List
+
 
     Task<long> EnqueueAsync<T>(string key, T value);
+    Task<long> EnqueueorCreateAsync<T>(string key, T value);
     Task<T> DequeueAsync<T>(string key) where T : class;
     /// <summary>
     /// 从队列中读取数据而不出队
@@ -27,17 +26,15 @@ public interface IRedisHelper
     /// <typeparam name="T">对象类型</typeparam>
     /// <returns>不指定 start、end 则获取所有数据</returns>
     Task<IEnumerable<T>> PeekRangeAsync<T>(string key, long start = 0, long stop = -1) where T : class;
-    #endregion
 
-    #region Set
+
 
     Task<bool> SetAddAsync<T>(string key, T value);
     Task<long> SetRemoveAsync<T>(string key, IEnumerable<T> values);
     Task<IEnumerable<T>> SetMembersAsync<T>(string key) where T : class;
     Task<bool> SetContainsAsync<T>(string key, T value);
-    #endregion
 
-    #region Sortedset
+
 
     Task<bool> SortedSetAddAsync(string key, string member, double score);
     Task<long> SortedSetRemoveAsync(string key, IEnumerable<string> members);
@@ -60,12 +57,11 @@ public interface IRedisHelper
         double start = double.NegativeInfinity, double stop = double.PositiveInfinity,
         Exclude exclude = Exclude.None, Order order = Order.Ascending, long skip = 0, long take = -1);
 
-    #endregion
 
-    #region Hash
 
     Task<ConcurrentDictionary<string, string>> HashGetAsync(string key);
     Task<ConcurrentDictionary<string, string>> HashGetFieldsAsync(string key, IEnumerable<string> fields);
+    Task HashSetAsync(string key, ConcurrentDictionary<string, string> entries);
     Task HashSetAsync(string key, ConcurrentDictionary<string, string> entries, TimeSpan timeSpan);
     Task HashSetFieldsAsync(string key, ConcurrentDictionary<string, string> fields);
     Task HashSetFieldsAsync(string key, ConcurrentDictionary<string, string> fields, TimeSpan timeSpan);
@@ -74,9 +70,8 @@ public interface IRedisHelper
     Task<bool> HashFieldsExistsAsync(string key, IEnumerable<string> fields);
     Task<bool> HashDeleteAsync(string key);
     Task<bool> HashDeleteFieldsAsync(string key, IEnumerable<string> fields);
-    #endregion
 
-    #region Key
+
 
     IEnumerable<string> GetAllKeys();
     IEnumerable<string> GetAllKeys(EndPoint endPoint);
@@ -106,9 +101,8 @@ public interface IRedisHelper
     /// <returns></returns>
     Task<bool> KeyExpireAsync(string key, TimeSpan? expiry);
     Task<bool> KeyExpireAsync(string key, DateTime? expiry);
-    #endregion
 
-    #region Advanced
+
 
     Task<long> PublishAsync(string channel, string msg);
     Task SubscribeAsync(string channel, Action<string, string> handler);
@@ -150,5 +144,4 @@ public interface IRedisHelper
 
     bool LockExecute<T, TResult>(string key, string value, Func<T, TResult> func, T arg, out TResult result, TimeSpan expiry, int timeout = 0);
 
-    #endregion
 }
