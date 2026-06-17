@@ -1,4 +1,6 @@
 using RedisHelper;
+using Newtonsoft.Json;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,11 +10,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddRedisHelper(redisOption =>
-{
-    redisOption.ConnectionString = Environment.GetEnvironmentVariable("Redis:ConnStr");
-    redisOption.DbNumber = 0;
-});
+var str = builder.Configuration.GetSection("RedisConnStr").Get<string>() ?? "127.0.0.1:6379";
+builder.Services.AddRedisHelper(str, 2);
+
 
 var app = builder.Build();
 

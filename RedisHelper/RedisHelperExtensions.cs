@@ -1,17 +1,18 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace RedisHelper;
 
 public static class RedisHelperExtensions
 {
+    /// <summary>
+    /// 通过 IConfiguration 注册 RedisHelper 服务
+    /// </summary>
     public static IServiceCollection AddRedisHelper(this IServiceCollection services, IConfiguration configuration)
     {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(configuration);
 
-        if (configuration == null)
-            throw new ArgumentNullException(nameof(configuration));
         services.AddOptions<RedisHelperOptions>()
             .Configure(configuration.Bind)
             .ValidateDataAnnotations();
@@ -19,16 +20,19 @@ public static class RedisHelperExtensions
         return services;
     }
 
-    public static IServiceCollection AddRedisHelper(this IServiceCollection services,
-        Action<RedisHelperOptions> configureOptions)
+    /// <summary>
+    /// 通过连接字符串和数据库编号注册 RedisHelper 服务
+    /// </summary>
+    public static IServiceCollection AddRedisHelper(this IServiceCollection services, string redisConnStr, int dbNumber)
     {
-        if (services == null)
-            throw new ArgumentNullException(nameof(services));
+        ArgumentNullException.ThrowIfNull(services);
+        ArgumentNullException.ThrowIfNull(redisConnStr);
 
-        if (configureOptions == null)
-            throw new ArgumentNullException(nameof(configureOptions));
-
-        services.Configure(configureOptions);
+        services.Configure<RedisHelperOptions>(opt =>
+        {
+            opt.ConnectionString = redisConnStr;
+            opt.DbNumber = dbNumber;
+        });
         services.AddSingleton<IRedisHelper, RedisHelper>();
         return services;
     }
