@@ -1,3 +1,5 @@
+using Com.Ctrip.Framework.Apollo.Enums;
+using Com.Ctrip.Framework.Apollo;
 using RedisHelper;
 using Newtonsoft.Json;
 
@@ -12,6 +14,7 @@ builder.Services.AddSwaggerGen();
 
 var str = builder.Configuration.GetSection("RedisConnStr").Get<string>() ?? "127.0.0.1:6379";
 builder.Services.AddRedisHelper(str, 2);
+
 
 
 var app = builder.Build();

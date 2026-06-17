@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RedisHelper.WebApi.TestEntity;
 using StackExchange.Redis;
+using System.Collections.Concurrent;
 
 namespace RedisHelper.WebApi.Controllers;
 
@@ -29,6 +33,8 @@ public class TestController : ControllerBase
     {
         // 基本 SET/GET
         Book book = new("今日时报");
+        Book book2 = new("东方时空");
+        Book book3 = new("早间新闻");
         await redis.StringSetAsync(book.Title, book);
         var getBook = await redis.StringGetAsync<Book>(book.Title);
 

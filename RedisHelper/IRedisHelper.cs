@@ -47,7 +47,6 @@ public interface IRedisHelper
 
     #endregion
 
-    #region List
 
     /// <summary>
     /// 入队（右侧推入）。如果 key 不存在则自动创建
@@ -94,7 +93,6 @@ public interface IRedisHelper
 
     #endregion
 
-    #region Set
 
     Task<bool> SetAddAsync<T>(string key, T value);
     /// <summary>
@@ -189,9 +187,7 @@ public interface IRedisHelper
     /// </summary>
     Task<long> SortedSetAddMultipleAsync(string key, IEnumerable<KeyValuePair<string, double>> members);
 
-    #endregion
 
-    #region Hash
 
     Task<Dictionary<string, string>> HashGetAsync(string key);
     Task<Dictionary<string, string>?> HashGetFieldsAsync(string key, IEnumerable<string> fields);
@@ -244,7 +240,7 @@ public interface IRedisHelper
 
     #endregion
 
-    #region Key
+
 
     /// <summary>
     /// 获取所有 Key（使用 SCAN，不会阻塞 Redis）
@@ -301,7 +297,6 @@ public interface IRedisHelper
 
     #endregion
 
-    #region Advanced
 
     Task<long> PublishAsync(string channel, string msg);
     /// <summary>
@@ -370,5 +365,4 @@ public interface IRedisHelper
 
     bool LockExecute<T, TResult>(string key, string value, Func<T, TResult> func, T arg, out TResult? result, TimeSpan expiry, int timeout = 0);
 
-    #endregion
 }
