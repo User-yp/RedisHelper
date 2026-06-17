@@ -47,6 +47,7 @@ public interface IRedisHelper
 
     #endregion
 
+    #region List
 
     /// <summary>
     /// 入队（右侧推入）。如果 key 不存在则自动创建
@@ -93,6 +94,7 @@ public interface IRedisHelper
 
     #endregion
 
+    #region Set
 
     Task<bool> SetAddAsync<T>(string key, T value);
     /// <summary>
@@ -241,7 +243,7 @@ public interface IRedisHelper
     #endregion
 
 
-
+    #region Key
     /// <summary>
     /// 获取所有 Key（使用 SCAN，不会阻塞 Redis）
     /// </summary>
